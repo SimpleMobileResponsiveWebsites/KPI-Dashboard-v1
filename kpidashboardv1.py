@@ -1,6 +1,13 @@
+import streamlit as st
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
+from datetime import datetime
+
+# Set Streamlit page configuration
+st.set_page_config(page_title="KPI Dashboard", layout="wide")
+
+# Title for the app
+st.title("KPI Dashboard")
 
 # Set random seed for reproducibility
 np.random.seed(42)
@@ -17,7 +24,7 @@ def generate_kpi_data():
     
     # Generate sales with seasonal pattern, trend, and random variation
     base_sales = np.linspace(45000, 85000, n)  # Upward trend
-    seasonal = 15000 * np.sin(np.linspace(0, 4*np.pi, n))  # Seasonal pattern
+    seasonal = 15000 * np.sin(np.linspace(0, 4 * np.pi, n))  # Seasonal pattern
     noise = np.random.normal(0, 5000, n)  # Random variation
     sales = base_sales + seasonal + noise
     
@@ -60,14 +67,17 @@ def generate_kpi_data():
 # Generate the data
 df = generate_kpi_data()
 
-# Save to CSV
-df.to_csv('kpi_dashboard_data.csv', index=False)
+# Display data and statistics in Streamlit
+st.subheader("Generated KPI Data")
+st.dataframe(df)
 
-# Preview of the data
-print("\nFirst few rows of the generated data:")
-print(df.head())
+st.subheader("Summary Statistics")
+st.write(df.describe())
 
-print("\nSummary statistics:")
-print(df.describe())
-
-print("\nData shape:", df.shape)
+# Save to CSV and provide a download button
+st.download_button(
+    label="Download CSV",
+    data=df.to_csv(index=False),
+    file_name="kpi_dashboard_data.csv",
+    mime="text/csv"
+)
